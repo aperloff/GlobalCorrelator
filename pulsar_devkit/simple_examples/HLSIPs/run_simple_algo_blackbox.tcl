@@ -1,15 +1,26 @@
 # Create a project
 open_project -reset proj0
 
-# Add design files
-add_files src/simple_algo_blackbox.cpp
-# Add test bench & files
-add_files -tb simple_algo_blackbox_test.cpp
-# JSON file
-add_files -blackbox src/simple_algo_blackbox.json
+# Program Control Options
+# "", "STREAM"
+set inputStyle "STREAM"
 
-# Set the top-level function
-set_top simple_algo_blackbox
+# Add design files
+add_files src/simple_algo_blackbox.cpp -cflags "-D${inputStyle}"
+# Add test bench & files
+add_files -tb simple_algo_blackbox_test.cpp -cflags "-D${inputStyle}"
+# JSON file and top-level function
+if {$inputStyle == "STREAM"} {
+	add_files -blackbox src/simple_algo_blackbox_stream.json
+
+	# Set the top-level function
+	set_top simple_algo_blackbox_stream
+} else {
+	add_files -blackbox src/simple_algo_blackbox.json
+
+	# Set the top-level function
+	set_top simple_algo_blackbox
+}
 
 # ########################################################
 # Create a solution

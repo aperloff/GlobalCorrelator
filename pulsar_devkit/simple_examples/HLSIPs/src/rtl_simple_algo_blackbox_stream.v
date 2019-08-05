@@ -4,11 +4,13 @@
 
 (* use_dsp = "simd" *)
 (* dont_touch = "1" *)
-module rtl_simple_algo_blackbox (input             ap_clk, ap_rst, ap_ce, ap_start, ap_continue,
-                                 input [10:0]      a1, a2, a3, a4, b1, b2, b3, b4,
-                                 output            ap_done, ap_ready, ap_idle,
-                                 output            z1_ap_vld, z2_ap_vld, z3_ap_vld, z4_ap_vld,
-                                 output reg [10:0] z1, z2, z3, z4);
+module rtl_simple_algo_blackbox_stream (input             ap_clk, ap_rst, ap_ce, ap_start, ap_continue,
+                                        input [43:0]      a, b,
+                                        input             a_empty_n, b_empty_n,
+                                        input             a_read, b_read,
+                                        output            ap_done, ap_ready, ap_idle,
+                                        output            z1_ap_vld, z2_ap_vld, z3_ap_vld, z4_ap_vld,
+                                        output reg [10:0] z1, z2, z3, z4);
 
    wire ce = ap_ce;
 
@@ -40,14 +42,14 @@ module rtl_simple_algo_blackbox (input             ap_clk, ap_rst, ap_ce, ap_sta
           z2    <= areg2 + breg2;
           z3    <= areg3 + breg3;
           z4    <= areg4 + breg4;
-          areg1 <= a1;
-          areg2 <= a2;
-          areg3 <= a3;
-          areg4 <= a4;
-          breg1 <= b1;
-          breg2 <= b2;
-          breg3 <= b3;
-          breg4 <= b4;
+          areg1 <= a[10:0];
+          areg2 <= a[21:11];
+          areg3 <= a[32:22];
+          areg4 <= a[43:33];
+          breg1 <= b[10:0];
+          breg2 <= b[21:11];
+          breg3 <= b[32:22];
+          breg4 <= b[43:33];
           dly1  <= ap_start;
           dly2  <= dly1;
        end
