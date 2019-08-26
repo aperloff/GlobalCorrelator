@@ -58,8 +58,8 @@
       },
       "rtl_resource_usage":
       {
-          "FF": "299",
-          "LUT": "193",
+          "FF": "2",
+          "LUT": "1",
           "BRAM": "0",
           "URAM": "0",
           "DSP": "1"
