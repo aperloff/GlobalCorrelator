@@ -11,59 +11,33 @@
       ],
       "c_parameters": [
       {
-          "c_name": "a",
+          "c_name": "artl",
           "c_port_direction": "in",
           "rtl_ports":
           {
-              "FIFO_empty_flag": "a_empty_n",
-              "FIFO_read_enable": "a_read",
-              "FIFO_data_read_in": "a"
+              "FIFO_empty_flag": "artl_empty_n",
+              "FIFO_read_enable": "artl_read",
+              "FIFO_data_read_in": "artl"
           }
       },
       {
-          "c_name": "b",
+          "c_name": "brtl",
           "c_port_direction": "in",
           "rtl_ports":
           {
-              "FIFO_empty_flag": "b_empty_n",
-              "FIFO_read_enable": "b_read",
-              "FIFO_data_read_in": "b"
+              "FIFO_empty_flag": "brtl_empty_n",
+              "FIFO_read_enable": "brtl_read",
+              "FIFO_data_read_in": "brtl"
           }
       },
       {
-          "c_name": "z1",
+          "c_name": "z",
           "c_port_direction": "out",
           "rtl_ports":
           {
-              "data_write_out": "z1",
-              "data_write_valid": "z1_ap_vld"
-          }
-      },
-      {
-          "c_name": "z2",
-          "c_port_direction": "out",
-          "rtl_ports":
-          {
-              "data_write_out": "z2",
-              "data_write_valid": "z2_ap_vld"
-          }
-      },
-      {
-          "c_name": "z3",
-          "c_port_direction": "out",
-          "rtl_ports":
-          {
-              "data_write_out": "z3",
-              "data_write_valid": "z3_ap_vld"
-          }
-      },
-      {
-          "c_name": "z4",
-          "c_port_direction": "out",
-          "rtl_ports":
-          {
-              "data_write_out": "z4",
-              "data_write_valid": "z4_ap_vld"
+			  "FIFO_full_flag" : "z_full_n",
+			  "FIFO_write_enable" : "z_write",
+			  "FIFO_data_write_out" : "z"
           }
       }],
       "rtl_common_signal":
@@ -84,8 +58,8 @@
       },
       "rtl_resource_usage":
       {
-          "FF": "0",
-          "LUT": "0",
+          "FF": "299",
+          "LUT": "193",
           "BRAM": "0",
           "URAM": "0",
           "DSP": "1"
