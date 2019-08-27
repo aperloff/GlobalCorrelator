@@ -38,7 +38,7 @@ void read_write(hls::stream<data_v> & a_read, hls::stream<data_v> & a_write,
 	}
 }
 
-
+//--------------------------------------------------------
 void rtl_simple_algo_blackbox_stream(hls::stream<ap_uint<kWidth*kSize> > & artl, hls::stream<ap_uint<kWidth*kSize> > & brtl,
 									 hls::stream<ap_uint<kWidth*kSize> > & z) {
 	#pragma HLS inline=off
@@ -59,6 +59,14 @@ void rtl_simple_algo_blackbox_stream(hls::stream<ap_uint<kWidth*kSize> > & artl,
 #endif		
 	}
 }
+/*
+void rtl_simple_algo_blackbox_stream(ap_uint<kWidth*kSize> artl, ap_uint<kWidth*kSize> brtl,
+									 hls::stream<ap_uint<kWidth*kSize> > & z) {
+	#pragma HLS inline=off
+	#pragma HLS pipeline II=1
+	z.write(artl+brtl);
+}
+*/
 
 //--------------------------------------------------------
 void sum(hls::stream<ap_uint<kWidth*kSize> > & z, data_t &sigma) {
@@ -83,5 +91,17 @@ void simple_algo_blackbox_stream(hls::stream<data_v> & a, hls::stream<data_v> & 
 	rtl_simple_algo_blackbox_stream(a_top, b_top, z);    
 	sum(z,sigma);
 }
-
+/*
+void simple_algo_blackbox_stream(hls::stream<data_v> & a, hls::stream<data_v> & b, data_t &sigma) {
+	#pragma HLS dataflow
+	ap_uint<kWidth*kSize> a_top, b_top;
+	hls::stream<ap_uint<kWidth*kSize> > z;
+	for (unsigned int i=0; i<kDepth; i++) {
+		a_top = a.read();
+		b_top = b.read();
+		rtl_simple_algo_blackbox_stream(a_top, b_top, z);
+	}
+	sum(z,sigma);
+}
+*/
 #endif

@@ -3,8 +3,8 @@
 
 #define NTEST 4
 #define kSize 11
-#define kWidth 4
-#define kDepth 1
+#define kWidth 1
+#define kDepth 4
 typedef ap_uint<kSize> data_t;
 typedef ap_uint<kWidth*kSize> data_v;
 

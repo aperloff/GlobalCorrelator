@@ -4,7 +4,7 @@ open_project -reset proj0
 # Program Control Options
 # "SCALAR", "STREAM", "DEEPSTREAM"
 # Note: For STREAM and DEEPSTREAM remember to change kWidth and kDepth to (4,1) and (1,4), respectively
-set inputStyle "STREAM"
+set inputStyle "DEEPSTREAM"
 
 # Add design files
 add_files src/simple_algo_blackbox.cpp -cflags "-std=c++14 -D${inputStyle}"

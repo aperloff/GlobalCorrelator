@@ -25,10 +25,8 @@ int main() {
 		data_v t_a, t_b;
 		hls::stream<data_v> t_a_s, t_b_s;
 #ifdef DEEPSTREAM
-		for (unsigned int i=0; i<kDepth; i++) {
-			t_a_s.write(t_a1[test]); t_a_s.write(t_a2[test]); t_a_s.write(t_a3[test]); t_a_s.write(t_a4[test]);
-			t_b_s.write(t_b1[test]); t_b_s.write(t_b2[test]); t_b_s.write(t_b3[test]); t_b_s.write(t_b4[test]);
-		}
+		t_a_s.write(t_a1[test]); t_a_s.write(t_a2[test]); t_a_s.write(t_a3[test]); t_a_s.write(t_a4[test]);
+		t_b_s.write(t_b1[test]); t_b_s.write(t_b2[test]); t_b_s.write(t_b3[test]); t_b_s.write(t_b4[test]);
 #else
 		t_a = (data_v(t_a4[test])<<(kSize*3)) + (data_v(t_a3[test])<<(kSize*2)) + (data_v(t_a2[test])<<(kSize*1)) + (data_v(t_a1[test])<<(kSize*0));
 		t_b = (data_v(t_b4[test])<<(kSize*3)) + (data_v(t_b3[test])<<(kSize*2)) + (data_v(t_b2[test])<<(kSize*1)) + (data_v(t_b1[test])<<(kSize*0));
@@ -39,7 +37,6 @@ int main() {
 		std::cout << " t_sigma " << (int)t_sigma << " t_ref " << (int)t_ref <<  std::endl;
 		if (t_sigma != t_ref) return -1*(test+1);
 
-		/*
 		int t_a_s_data_remaining = 0;
 		int t_b_s_data_remaining = 0;
 		while (!t_a_s.empty()) t_a_s_data_remaining++;
@@ -49,7 +46,6 @@ int main() {
 			if (t_b_s_data_remaining!=0) std::cout << " ERROR::There are " << t_b_s_data_remaining << " units of data remaining in t_b_s!" << std::endl;
 			return -9999;
 		}
-		*/
 	}
 	return 0;
 }
