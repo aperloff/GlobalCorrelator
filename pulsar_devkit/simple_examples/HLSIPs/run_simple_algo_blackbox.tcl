@@ -2,16 +2,22 @@
 open_project -reset proj0
 
 # Program Control Options
-# "SCALAR", "STREAM"
+# "SCALAR", "STREAM", "DEEPSTREAM"
+# Note: For STREAM and DEEPSTREAM remember to change kWidth and kDepth to (4,1) and (1,4), respectively
 set inputStyle "STREAM"
 
 # Add design files
-add_files src/simple_algo_blackbox.cpp -cflags "-std=c++14 -D${inputStyle} -DDEBUG=0"
+add_files src/simple_algo_blackbox.cpp -cflags "-std=c++14 -D${inputStyle}"
 # Add test bench & files
 add_files -tb simple_algo_blackbox_test.cpp -cflags "-std=c++14 -D${inputStyle}"
 # JSON file and top-level function
 if {$inputStyle == "STREAM"} {
 	add_files -blackbox src/simple_algo_blackbox_stream.json
+
+	# Set the top-level function
+	set_top simple_algo_blackbox_stream
+} elseif {$inputStyle == "DEEPSTREAM"} {
+	add_files -blackbox src/simple_algo_blackbox_deepstream.json
 
 	# Set the top-level function
 	set_top simple_algo_blackbox_stream
@@ -63,7 +69,7 @@ if {$hls_exec == 1} {
 	export_design -rtl verilog -flow impl
 } else {
 	# Default is to exit after setup
-	csynth_design
+	#csynth_design
 }
 
 exit

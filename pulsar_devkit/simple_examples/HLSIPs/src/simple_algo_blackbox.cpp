@@ -1,6 +1,6 @@
 #include "simple_algo_blackbox.h"
 
-#ifndef STREAM
+#ifdef SCALAR
 
 //--------------------------------------------------------
 void rtl_simple_algo_blackbox(data_t  a1, data_t  a2, data_t  a3, data_t  a4,
@@ -25,44 +25,63 @@ void simple_algo_blackbox(data_t  a1, data_t  a2, data_t  a3, data_t  a4,
 #else
 
 //--------------------------------------------------------
-void rtl_simple_algo_blackbox_stream(hls::stream<ap_uint<44> > & artl, hls::stream<ap_uint<44> > & brtl,
-									 hls::stream<ap_uint<44> > & z) {
-	#pragma HLS inline=off
-	#pragma HLS pipeline II=1
-	ap_uint<44>  a_tmp, b_tmp;
-	a_tmp = artl.read();
-	b_tmp = brtl.read();
-	z.write((data_v(a_tmp(43,33) + b_tmp(43,33))<<(kSize*3)) +
-	        (data_v(a_tmp(32,22) + b_tmp(32,22))<<(kSize*2)) +
-	        (data_v(a_tmp(21,11) + b_tmp(21,11))<<(kSize*1)) +
-	        (data_v(a_tmp(10,0) + b_tmp(10,0))<<(kSize*0)));
-}
-
-//--------------------------------------------------------
-void sum(hls::stream<ap_uint<44> > & z, data_t &sigma) {
-	data_v tmp;
-	tmp = z.read();
-	sigma = tmp(10,0) + tmp(21,11) + tmp(32,22) + tmp(43,33);
-}
-
 void read_write(hls::stream<data_v> & a_read, hls::stream<data_v> & a_write,
-                hls::stream<data_v> & b_read, hls::stream<data_v> & b_write) {
+				hls::stream<data_v> & b_read, hls::stream<data_v> & b_write) {
 	//This pipeline seems to be supurfluous
 	//It does set the II=1 in the report, but doesn't change any of the output latency
 	//With:    Latency=0 II=1
 	//Without: Latency=0 II=0
 	#pragma HLS pipeline II=1
-    a_write.write(a_read.read());
-    b_write.write(b_read.read());
+	for (unsigned int i=0; i<kDepth; i++) {
+		a_write.write(a_read.read());
+		b_write.write(b_read.read());
+	}
+}
+
+
+void rtl_simple_algo_blackbox_stream(hls::stream<ap_uint<kWidth*kSize> > & artl, hls::stream<ap_uint<kWidth*kSize> > & brtl,
+									 hls::stream<ap_uint<kWidth*kSize> > & z) {
+	#pragma HLS inline=off
+	#pragma HLS pipeline II=1
+	ap_uint<kWidth*kSize>  a_tmp=0, b_tmp=0;
+	for (unsigned int i=0; i<kDepth; i++) {
+		a_tmp = artl.read();
+		//printf("a_tmp=%i\n",int(a_tmp));
+		b_tmp = brtl.read();
+		//printf("b_tmp=%i\n",int(b_tmp));
+#ifdef DEEPSTREAM
+		z.write(a_tmp+b_tmp);
+#else
+		z.write((data_v(a_tmp(43,33) + b_tmp(43,33))<<(kSize*3)) +
+				(data_v(a_tmp(32,22) + b_tmp(32,22))<<(kSize*2)) +
+				(data_v(a_tmp(21,11) + b_tmp(21,11))<<(kSize*1)) +
+				(data_v(a_tmp(10,0) + b_tmp(10,0))<<(kSize*0)));
+#endif		
+	}
+}
+
+//--------------------------------------------------------
+void sum(hls::stream<ap_uint<kWidth*kSize> > & z, data_t &sigma) {
+	#pragma HLS pipeline II=1
+	data_v tmp = 0;
+	sigma = 0;
+	for (unsigned int i=0; i<kDepth; i++) {
+		tmp = z.read();
+#ifdef DEEPSTREAM
+		sigma += tmp;
+#else
+	sigma = tmp(10,0) + tmp(21,11) + tmp(32,22) + tmp(43,33);
+#endif
+	}
 }
 
 //--------------------------------------------------------
 void simple_algo_blackbox_stream(hls::stream<data_v> & a, hls::stream<data_v> & b, data_t &sigma) {
-    #pragma HLS dataflow
-    hls::stream<ap_uint<44> > a_top, b_top, z;
-    read_write(a,a_top,b,b_top);
-    rtl_simple_algo_blackbox_stream(a_top, b_top, z);    
-    sum(z,sigma);
+	#pragma HLS dataflow
+	hls::stream<ap_uint<kWidth*kSize> > a_top, b_top, z;
+	read_write(a,a_top,b,b_top);
+	rtl_simple_algo_blackbox_stream(a_top, b_top, z);    
+	sum(z,sigma);
 }
 
 #endif
