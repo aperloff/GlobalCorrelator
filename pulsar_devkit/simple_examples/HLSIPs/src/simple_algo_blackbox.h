@@ -6,6 +6,7 @@
 //#include <iostream>
 //#endif
 
+#define NTEST 4
 #define kSize 11
 typedef ap_uint<kSize> data_t;
 typedef ap_uint<44> data_v;
