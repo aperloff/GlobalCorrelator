@@ -55,7 +55,7 @@ module rtl_simple_algo_blackbox_stream (input             ap_clk, ap_rst, ap_ce,
     assign z_write   = dly2;
     //These are never used later on by the HLS created code
     //A wire may be created for them, but HLS doesn't hook them up
-    assign z_full_n  = 1'b1;
+    //assign z_full_n  = 1'b1;
     assign ap_done   = dly2;
     assign ap_idle   = (ap_start^ap_ready) || (ap_start==1'b0 && ap_ready==1'b1) || (ap_start==1'b0 && ap_ready==1'b0);
 

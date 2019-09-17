@@ -14,28 +14,28 @@ module rtl_simple_algo_blackbox_stream (input             ap_clk, ap_rst, ap_ce,
 
     wire ce = ap_ce;
 
-    reg [10:0] areg;
-    reg [10:0] breg;
-    reg        dly1;
+    reg       dly1;
+    reg [2:0] cnt;
 
     always @ (posedge ap_clk)
         if (ap_rst)
             begin
                 z     <= 0;
-                areg  <= 0;
-                breg  <= 0;
+                cnt   <= 0;
                 dly1  <= 0;
             end
         else if (ce)
             begin
-                z[10:0] <= areg + breg;
-                areg    <= artl[10:0];
-                breg    <= brtl[10:0];
-                dly1    <= ap_start && ~dly1;
+                z[10:0] <= artl[10:0] + brtl[10:0];
+                dly1    <= ap_start || dly1;
+                if (cnt==4)
+                    cnt <= 0;
+                else
+                    cnt <= cnt+1;
             end
 
-    assign ap_ready  = ap_start && ~dly1;
-    assign z_write   = dly1;
+    assign ap_ready  = ap_start || dly1;//ap_ready;//ap_start && ~dly1;
+    assign z_write   = dly1 && cnt!=2;
     //assign artl_read = 1'b1;
     //assign brtl_read = 1'b1;
     //These are never used later on by the HLS created code
@@ -44,6 +44,6 @@ module rtl_simple_algo_blackbox_stream (input             ap_clk, ap_rst, ap_ce,
     //assign artl_empty_n = 1'b1;
     //assign brtl_empty_n = 1'b1;
     assign ap_done   = dly1;
-    assign ap_idle   = (ap_start^ap_ready) || (ap_start==1'b0 && ap_ready==1'b1) || (ap_start==1'b0 && ap_ready==1'b0);
+    assign ap_idle   = ~ap_ready;
 
 endmodule // rtl_simple_algo_blackbox

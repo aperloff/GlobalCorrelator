@@ -27,12 +27,14 @@ void simple_algo_blackbox(data_t  a1, data_t  a2, data_t  a3, data_t  a4,
 //--------------------------------------------------------
 void read_write(hls::stream<data_v> & a_read, hls::stream<data_v> & a_write,
 				hls::stream<data_v> & b_read, hls::stream<data_v> & b_write) {
+	//#pragma HLS inline
 	//This pipeline seems to be supurfluous
 	//It does set the II=1 in the report, but doesn't change any of the output latency
 	//With:    Latency=0 II=1
 	//Without: Latency=0 II=0
 	#pragma HLS pipeline II=1
-	for (unsigned int i=0; i<kDepth; i++) {
+	READ_WRITE: for (unsigned int i=0; i<kDepth; i++) {
+		//#pragma HLS UNROLL
 		a_write.write(a_read.read());
 		b_write.write(b_read.read());
 	}
@@ -44,7 +46,7 @@ void rtl_simple_algo_blackbox_stream(hls::stream<ap_uint<kWidth*kSize> > & artl,
 	#pragma HLS inline=off
 	#pragma HLS pipeline II=1
 	ap_uint<kWidth*kSize>  a_tmp=0, b_tmp=0;
-	for (unsigned int i=0; i<kDepth; i++) {
+	RTL: for (unsigned int i=0; i<kDepth; i++) {
 		a_tmp = artl.read();
 		//printf("a_tmp=%i\n",int(a_tmp));
 		b_tmp = brtl.read();
@@ -73,12 +75,12 @@ void sum(hls::stream<ap_uint<kWidth*kSize> > & z, data_t &sigma) {
 	#pragma HLS pipeline II=1
 	data_v tmp = 0;
 	sigma = 0;
-	for (unsigned int i=0; i<kDepth; i++) {
+	SUM: for (unsigned int i=0; i<kDepth; i++) {
 		tmp = z.read();
 #ifdef DEEPSTREAM
 		sigma += tmp;
 #else
-	sigma = tmp(10,0) + tmp(21,11) + tmp(32,22) + tmp(43,33);
+		sigma = tmp(10,0) + tmp(21,11) + tmp(32,22) + tmp(43,33);
 #endif
 	}
 }
@@ -88,7 +90,7 @@ void simple_algo_blackbox_stream(hls::stream<data_v> & a, hls::stream<data_v> & 
 	#pragma HLS dataflow
 	hls::stream<ap_uint<kWidth*kSize> > a_top, b_top, z;
 	read_write(a,a_top,b,b_top);
-	rtl_simple_algo_blackbox_stream(a_top, b_top, z);    
+	rtl_simple_algo_blackbox_stream(a_top, b_top, z);
 	sum(z,sigma);
 }
 /*
