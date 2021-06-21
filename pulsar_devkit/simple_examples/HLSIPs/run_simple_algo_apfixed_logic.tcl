@@ -1,6 +1,6 @@
 # open the project, don't forget to reset
 open_project -reset proj0
-set_top simple_algo_apfixed_logic_hw
+set_top simple_algo_apfixed_logic_hw_loop
 add_files src/simple_algo_apfixed_logic.cpp
 add_files -tb simple_algo_apfixed_logic_test.cpp 
 add_files -tb simple_algo_apfixed_logic_ref.cpp

@@ -6,39 +6,47 @@
 #include "ap_fixed.h"
 
 int main() {
-	
-   std::vector<ap_uint<12>> int_inputs = {0b000000000000, 0b000000000001, 0b111111111111, 0b111111111110, 0b100000000000, 0b011111111111, 0b000010000000, 0b111101111111};
-	
+	std::vector<std::vector<int_t>> int_inputs = { {0b000000000000, 0b000000000001}, 
+												   {0b111111111111, 0b111111111110}, 
+												   {0b100000000000, 0b011111111111}, 
+												   {0b000010000000, 0b111101111111},
+												   {0b000000000000, 0b000000000001, 0b000000000000, 0b000000000000},
+												   {0b100000000000, 0b011111111111, 0b011111111111, 0b011111111111},
+												   {0b000001000000, 0b000000110001}, 
+												   {0b111111111111, 0b111111111110}, 
+												   {0b100000010000, 0b011000111111}, 
+												   {0b000011010000, 0b111101100111} };
+	count_t errors = 0;
+
     for (unsigned int input = 0; input < int_inputs.size(); ++input) {
-		std::cout << "\nRaw Input (ap_uint Format)= " << int_inputs[input].to_string().c_str() << std::endl;
-		ap_uint<12> inA = int_inputs[input];
-		ap_fixed<12, 5, AP_RND_CONV, AP_SAT> inB = 0;
-        inB.V = int_inputs[input](11,0);
-		ap_uint<1> outA_ref = 0;
-		ap_uint<1> outB_ref = 0;
-		ap_uint<1> outA_hw = 0;
-		ap_uint<1> outB_hw = 0;
+		std::cout << "Inputs #" << input+1 << std::endl;
 
-		simple_algo_apfixed_logic_ref(inA, inB, outA_ref, outB_ref);
-		simple_algo_apfixed_logic_hw(inA, inB, outA_hw, outB_hw);
+		count_t sel_tracks_counter_int_ref = 0;
+		count_t sel_tracks_counter_fixed_ref = 0;
+		simple_algo_apfixed_logic_ref_loop( int_inputs[input],
+											sel_tracks_counter_int_ref, 
+											sel_tracks_counter_fixed_ref);
+		std::cout << "ref ap_uint selected tracks: " << sel_tracks_counter_int_ref << std::endl;
+		std::cout << "ref ap_fixed selected tracks: " << sel_tracks_counter_fixed_ref << std::endl;
+		
+		count_t sel_tracks_counter_int_hw = 0;
+		count_t sel_tracks_counter_fixed_hw = 0;
+		simple_algo_apfixed_logic_hw_loop( int_inputs[input], 
+							  			   sel_tracks_counter_int_hw, 
+										   sel_tracks_counter_fixed_hw );
+		std::cout << "hw ap_uint selected tracks: " << sel_tracks_counter_int_hw << std::endl;
+		std::cout << "hw ap_fixed selected tracks: " << sel_tracks_counter_fixed_hw << std::endl;
 
-		std::cout << "\tC Code Ref: \n\t\tap_uint input " << inA << " -> ap_uint output (!input) " << outA_ref << " \n\t\tap_fixed input " << inB << " -> ap_uint output (!input) " << outB_ref << std::endl;
-		if (outA_ref != outB_ref) {
-			printf( "C Code Reference Data Type Discrepency!" );
-		}
-		std::cout << "\tHW: \n\t\tap_uint input " << inA << " -> ap_uint output (!input) " << outA_hw << " \n\t\tap_fixed input " << inB << " -> ap_uint output (!input) " << outB_hw << std::endl;
-		if (outA_hw != outB_hw) {
-			printf( "HW Data Type Discrepency!" );
-		}
-
-		if (outA_ref != outA_hw) {
-			printf( "ap_uint Ref-HW Discrepency!!!" );
-		}
-
-		if (outB_ref != outB_hw) {
-			printf( "ap_fixed Ref-HW Discrepency!!!" );
-		}
+		out_t agree = sel_tracks_counter_int_hw + sel_tracks_counter_fixed_hw + sel_tracks_counter_int_ref + sel_tracks_counter_fixed_ref;
+		if ((agree != 0) & (agree != 4)) {
+			std::cout << "\nValue Disagreement!!!\n" << std::endl;
+			errors++;
+		} 
 	}
 
-	return 0;
+	if (!errors) {
+		std::cout << "\nAll Values Agree\n" << std::endl;
+	}
+
+	return errors;
 }
