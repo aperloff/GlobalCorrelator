@@ -15,9 +15,9 @@ void simple_algo_apfixed_logic_hw( int_t inA, fixed_t inB, out_t &outA , out_t &
 	outB = outB | inB[TOTAL_SIZE-1];
 }
 
-void simple_algo_apfixed_logic_hw_loop( std::vector<int_t> inputs, count_t &counter_int, count_t &counter_fixed ) {
-	for (unsigned int index = 0; index < inputs.size(); ++index) {
-		int_t input = inputs.at(index); 
+void simple_algo_apfixed_logic_hw_loop( int_t inputs[SIZE_D1], count_t &counter_int, count_t &counter_fixed ) {
+	for (unsigned int index = 0; index < SIZE_D1; ++index) {
+		int_t input = inputs[index];
 		int_t inA = input;
 		fixed_t inB = 0;
 		inB.V = input(11,0);

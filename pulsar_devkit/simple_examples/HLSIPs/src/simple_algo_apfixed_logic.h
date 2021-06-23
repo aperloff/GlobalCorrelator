@@ -7,6 +7,7 @@
 #include <iostream>
 
 // Types
+#define SIZE_D1 2
 #define TOTAL_SIZE 12
 #define INT_SIZE 5
 typedef ap_uint<TOTAL_SIZE> int_t;
@@ -28,7 +29,7 @@ void simple_algo_apfixed_logic_hw( int_t inA,
 								   out_t  &outA, 
 								   out_t  &outB );
 
-void simple_algo_apfixed_logic_hw_loop( std::vector<int_t> inputs, 
+void simple_algo_apfixed_logic_hw_loop( int_t inputs[SIZE_D1], 
 										count_t &counter_int, 
 										count_t &counter_fixed );
 

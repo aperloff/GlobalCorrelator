@@ -10,8 +10,8 @@ int main() {
 												   {0b111111111111, 0b111111111110}, 
 												   {0b100000000000, 0b011111111111}, 
 												   {0b000010000000, 0b111101111111},
-												   {0b000000000000, 0b000000000001, 0b000000000000, 0b000000000000},
-												   {0b100000000000, 0b011111111111, 0b011111111111, 0b011111111111},
+												   {0b000000000000, 0b001001010001},
+												   {0b100000000000, 0b011111111111},
 												   {0b000001000000, 0b000000110001}, 
 												   {0b111111111111, 0b111111111110}, 
 												   {0b100000010000, 0b011000111111}, 
@@ -31,7 +31,7 @@ int main() {
 		
 		count_t sel_tracks_counter_int_hw = 0;
 		count_t sel_tracks_counter_fixed_hw = 0;
-		simple_algo_apfixed_logic_hw_loop( int_inputs[input], 
+		simple_algo_apfixed_logic_hw_loop( &(int_inputs.at(input).at(0)), 
 							  			   sel_tracks_counter_int_hw, 
 										   sel_tracks_counter_fixed_hw );
 		std::cout << "hw ap_uint selected tracks: " << sel_tracks_counter_int_hw << std::endl;
